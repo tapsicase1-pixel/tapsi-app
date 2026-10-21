@@ -7,17 +7,37 @@ jobs:
       - uses: actions/checkout@v4
       - name: Unzip project
         run: |
-          unzip -q android.zip -d tmp_unzip
-          if [ -d tmp_unzip/android ]; then cp -r tmp_unzip/android/* .; else cp -r tmp_unzip/* .; fi
+          ls -l
+          unzip -o -q android.zip -d tmp_unzip
+          echo "=== tmp_unzip ==="
+          ls -R tmp_unzip | head -n 100
+          ROOT=$(find tmp_unzip -name "settings.gradle*" | head -n 1 | xargs dirname)
+          echo "ROOT=$ROOT"
+          if [ -n "$ROOT" ]; then
+            cp -r "$ROOT"/* .
+          else
+            if [ -d tmp_unzip/android ]; then cp -r tmp_unzip/android/* .; else cp -r tmp_unzip/* .; fi
+          fi
           rm -rf tmp_unzip android.zip
           rm -f local.properties
+          echo "=== root ==="
           ls -l
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: '17'
-      - run: chmod +x gradlew
-      - run: ./gradlew assembleDebug
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.7
+      - name: Build APK
+        run: |
+          if [ -f ./gradlew ]; then
+            chmod +x gradlew
+            ./gradlew assembleDebug
+          else
+            echo "gradlew not found, building with system gradle"
+            gradle assembleDebug
+          fi
       - uses: actions/upload-artifact@v4
         with:
           name: app-debug
