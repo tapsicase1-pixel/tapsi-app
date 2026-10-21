@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>ارزینو</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<!-- صفحه‌ی اصلی: کاور (مثل صرافی‌ها) + نمودار + قیمت‌ها + دکمه‌های خرید/فروش -->
+<section id="home" class="page home">
+  <div class="scroll">
+    <header class="cover">
+      <svg class="logo" viewBox="0 0 48 48" aria-hidden="true">
+        <rect x="6" y="14" width="8" height="20" rx="2" fill="#FFD000"/><rect x="9.2" y="8" width="1.6" height="30" fill="#FFD000"/>
+        <rect x="20" y="8" width="8" height="26" rx="2" fill="#2ECC71"/><rect x="23.2" y="3" width="1.6" height="38" fill="#2ECC71"/>
+        <rect x="34" y="18" width="8" height="18" rx="2" fill="#FF5C5C"/><rect x="37.2" y="12" width="1.6" height="30" fill="#FF5C5C"/>
+      </svg>
+      <h1>ارزینو؛ بازار زنده ارز،<br>طلا و ارز دیجیتال</h1>
+      <span id="upd" class="updtag"></span>
+    </header>
+
+    <div class="stage">
+      <div class="coins" aria-hidden="true">
+        <i class="k1">₿</i><i class="k2">Ξ</i><i class="k3">$</i>
+        <i class="k4">₮</i><i class="k5">◈</i><i class="k6">✕</i>
+      </div>
+      <div class="phone">
+        <div class="chartcard">
+          <div class="cinfo"><div class="cp"><b id="hPrice">—</b><span id="hChg" class="chg"></span></div>
+            <div class="cn"><span id="hName" class="hname"></span><small id="hUnit" class="dim"></small></div></div>
+          <div id="chips" class="chips"></div>
+          <div class="tfs" id="tfs">
+            <button data-r="15">۱۵ دقیقه</button><button data-r="30">۳۰ دقیقه</button><button data-r="60" class="on">۱ ساعت</button><button data-r="240">۴ ساعت</button><button data-r="D">۱ روز</button>
+          </div>
+          <div class="cwrap"><canvas id="hcv"></canvas><span id="demoTag" class="demotag hidden">نمایشی — داده‌ی زنده در حال جمع‌آوری</span></div>
+        </div>
+        <div id="list" class="list"></div>
+      </div>
+    </div>
+    <div class="foot">ارزینو</div>
+  </div>
+  <div class="dock">
+    <button id="btnBuy" class="bigbtn buy">خرید</button>
+    <button id="btnSell" class="bigbtn sell">فروش</button>
+  </div>
+</section>
+
+<!-- جستجو (ورود کد) -->
+<section id="search" class="page hidden">
+  <header class="bar"><button class="back" data-back>‹</button><b id="seTitle">جستجو</b></header>
+  <div class="searchbox">
+    <div class="sicon">🔍</div>
+    <input id="seInput" type="password" autocomplete="off" placeholder="جستجو…" inputmode="text">
+    <button id="seGo" class="gold">جستجو</button>
+    <p id="seMsg" class="err"></p>
+  </div>
+</section>
+
+<!-- پنل -->
+<section id="panel" class="page hidden">
+  <header class="bar"><button class="back" data-back>‹</button><b id="pnTitle"></b>
+    <button id="pnOut" class="small">خروج</button></header>
+  <div id="alarmBar" class="alarmbar hidden"><span id="alarmTxt"></span><button id="alarmSeen">دیدم ✓</button></div>
+  <nav class="tabs" id="tabs">
+    <button data-t="feed" class="on">پنل</button>
+    <button data-t="inbox" data-staff>پیام‌ها</button>
+    <button data-t="acc" data-staff>حساب‌ها</button>
+    <button data-t="ub" data-staff>یوزربات</button>
+    <button data-t="set">تنظیمات</button>
+  </nav>
+
+  <div id="t-feed" class="tab">
+    <div id="msgs" class="msgs"></div>
+    <div id="rkb" class="rkb"></div>
+    <div class="composer">
+      <span id="replyTag" class="replytag hidden"></span>
+      <input id="msgIn" placeholder="پیام…"><button id="msgGo">ارسال</button>
+    </div>
+  </div>
+
+  <div id="t-inbox" class="tab hidden">
+    <div id="threads"></div>
+    <div id="thread" class="hidden">
+      <button class="small" id="thBack">‹ همه‌ی گفتگوها</button>
+      <div id="thMsgs" class="msgs short"></div>
+      <div class="row"><select id="thMode"><option value="manual">دستی (ربات ساکت)</option><option value="auto">خودکار</option></select><button id="thSetMode" class="small">ثبت</button></div>
+      <div class="composer"><input id="thIn" placeholder="جواب به مشتری…"><button id="thGo">ارسال</button></div>
+    </div>
+  </div>
+
+  <div id="t-acc" class="tab hidden">
+    <div id="accAdmin" class="card hidden">
+      <h4>ثبت/تغییر رمز ورود</h4>
+      <p class="dim">رمز پیش‌فرض ماسور = کد ثبت‌نامی که در ربات زده (M-…)؛ اپراتورها tapsicase1 ، tapsicase2 ، … (به ترتیب). رمز را خالی بگذاری، حساب به رمز پیش‌فرض برمی‌گردد.</p>
+      <div class="row"><select id="acRole"><option value="masseur">ماسور</option><option value="operator">اپراتور</option></select>
+        <select id="acRef"></select></div>
+      <div class="row"><input id="acPw" placeholder="رمز جدید (خالی = پیش‌فرض)"><button id="acSet">ثبت</button></div>
+      <h4>تغییر رمز مادر</h4>
+      <div class="row"><input id="mOld" type="password" placeholder="رمز فعلی"><input id="mNew" type="password" placeholder="رمز جدید"><button id="mGo">تغییر</button></div>
+    </div>
+    <div id="accList"></div>
+  </div>
+
+  <div id="t-ub" class="tab hidden">
+    <div class="card" id="ubSwitch">
+      <label class="sw"><input type="checkbox" id="ubOn"><span>یوزربات‌های بله و تلگرام فعال باشند</span></label>
+      <p class="dim">خاموش = پیام‌ها فقط در «پیام‌ها» ثبت می‌شوند و ربات جواب نمی‌دهد.</p>
+    </div>
+    <div class="card">
+      <h4>سوال و جواب خودکار</h4>
+      <p class="dim">وقتی پیام مشتری شامل «کلمه» باشد، همین جواب فرستاده می‌شود (قبل از منوی رزرو).</p>
+      <input id="ruKw" placeholder="کلمه/عبارت (مثلاً: قیمت)">
+      <textarea id="ruAns" rows="3" placeholder="جواب"></textarea>
+      <div class="row"><select id="ruPl"><option value="all">بله و تلگرام</option><option value="bale">فقط بله</option><option value="telegram">فقط تلگرام</option></select>
+        <button id="ruSave">ذخیره</button><button id="ruCancel" class="small hidden">انصراف</button></div>
+    </div>
+    <div id="ruList"></div>
+  </div>
+
+  <div id="t-set" class="tab hidden">
+    <div class="card hidden" id="pwCard">
+      <h4>تغییر رمز ورود من</h4>
+      <p class="dim" id="pwHint"></p>
+      <div class="row"><input id="pwOld" type="password" placeholder="رمز فعلی"><input id="pwNew" type="password" placeholder="رمز جدید (حداقل ۴ حرف)"><button id="pwGo">تغییر</button></div>
+    </div>
+    <div class="card"><p>برای اینکه زنگ رزرو حتی با بسته بودن برنامه کار کند:</p>
+      <button id="stBat" class="small">استثنا از بهینه‌سازی باتری</button>
+      <button id="stFull" class="small">اجازه‌ی نمایش تمام‌صفحه</button></div>
+    <div class="card hidden" id="muteCard"><label class="sw"><input type="checkbox" id="muteChk"><span>بی‌صدا کردن زنگ (فقط اعلان نمایش داده شود)</span></label></div>
+    <div class="card hidden" id="soundCard">
+      <h4>صدای زنگ رزرو</h4>
+      <select id="sndMode"><option value="alarm">زنگ ساعت (پیش‌فرض گوشی)</option><option value="ringtone">آهنگ زنگ تماس</option><option value="notification">صدای اعلان</option><option value="custom">فایل صوتی من</option></select>
+      <div class="row"><input type="file" id="sndFile" accept="audio/*"></div>
+      <div class="row"><button id="sndGo">ثبت صدا</button><span id="sndInfo" class="dim"></span></div>
+    </div>
+    <div class="card"><p class="dim">در گوشی‌های شیائومی/سامسونگ/هوآوی، برنامه را در «شروع خودکار» و «بدون محدودیت باتری» هم فعال کنید.</p></div>
+  </div>
+</section>
+
+<div id="toast" class="toast hidden"></div>
+<script src="config.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
