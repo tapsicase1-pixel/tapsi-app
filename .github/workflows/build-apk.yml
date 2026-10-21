@@ -1,3 +1,4 @@
+
 name: Build APK
 on: [push, workflow_dispatch]
 jobs:
@@ -5,23 +6,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Unzip project
-        run: |
-          ls -l
-          unzip -o -q android.zip -d tmp_unzip
-          ROOT=$(find tmp_unzip -name "settings.gradle*" | head -n 1 | xargs dirname)
-          echo "ROOT=$ROOT"
-          cp -r "$ROOT"/* .
-          rm -rf tmp_unzip android.zip
-          rm -f local.properties
-          # پاک کردن پروکسی لوکال تو که گیت‌هاب رو خراب می‌کنه
-          sed -i '/systemProp.*proxy/d' gradle.properties || true
-          sed -i '/nonProxyHosts/d' gradle.properties || true
-          echo "=== gradle.properties ==="
-          cat gradle.properties
-          echo "=== settings ==="
-          cat settings.gradle
-          ls -l
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -29,17 +13,16 @@ jobs:
       - uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.7
-      - name: Build APK
+      - name: Clean local configs
         run: |
-          if [ -f ./gradlew ]; then
-            chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace
-          else
-            echo "gradlew missing, generate wrapper"
-            gradle wrapper --gradle-version 8.7
-            chmod +x gradlew
-            ./gradlew assembleDebug --stacktrace
-          fi
+          rm -f local.properties
+          rm -f android.zip
+          sed -i '/systemProp.*proxy/d' gradle.properties || true
+          sed -i '/nonProxyHosts/d' gradle.properties || true
+          cat gradle.properties
+          ls -l
+      - name: Build APK
+        run: gradle assembleDebug --stacktrace
       - uses: actions/upload-artifact@v4
         with:
           name: app-debug
